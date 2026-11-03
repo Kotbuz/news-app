@@ -1,30 +1,43 @@
 <div>
-    <h2>NEWS LIST</h2>
+    <h2>NSFW LIST</h2>
     <div>
-        <input type="text" placeholder="Search news..." [(ngModel)]="searchQuery" placeholder="Введите заголовок" />
+        <input type="text" [(ngModel)]="searchQuery" placeholder="Введите заголовок" />
     </div>
-    @if(isLoading) {
+    @if (loadingTime > 0 || isLoading) {
+    <p>
+        ⏱️ Время загрузки: <strong>{{ (loadingTime / 1000).toFixed(2) }} сек.</strong>
+    </p>
+    }
+
+
+    <!-- Блок с секундомером -->
+    @if (loadingTime > 0 || isLoading) {
+    <p>⏱️ Время загрузки: <strong>{{ (loadingTime / 1000).toFixed(2) }} сек.</strong></p>
+    }
+
+    <!-- Оптимизированная цепочка условий загрузки новостей -->
+    @if (isLoading) {
     <p>Loading news...</p>
-    } @else {
-    @if(errorMessage){
+    } @else if (errorMessage) {
     <p>Error: {{ errorMessage }}</p>
-    } @else {
-    @if(articles.length === 0){
+    } @else if (articles.length === 0) {
     <p>No news found.</p>
     } @else {
     <div class="list">
-        @for(a of articles;track a.title){
+        @for (a of articles; track a.title) {
         <app-news-card [article]="a" (toggleFavorite)="handleFavorite(a)"></app-news-card>
         }
     </div>
-    @if(!isLoading && articles.length > 0){
+
+    <!-- Пагинация теперь на одном уровне с листом, без избыточных проверок !isLoading -->
+    @if (articles.length > 0) {
     <div class="pagination">
-        <button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button (click)="nextPage()" [disabled]="currentPage * pageSize >= totalResults">Next</button>
+        @for (i of visiblePages; track i) {
+        <button (click)="goToPage(i)" [disabled]="i === currentPage">
+            {{ i }}
+        </button>
+        }
     </div>
-    }
-    }
     }
     }
 </div>

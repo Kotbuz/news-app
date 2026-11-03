@@ -17,6 +17,9 @@ export class NewsList {
   public isLoading: boolean = true;
   public errorMessage: string = '';
 
+  loadingTime = 0;
+  private timerInterval: any;
+
   public currentPage: number = 1;
   public pageSize: number = 10;
   public totalResults: number = 0;
@@ -29,21 +32,48 @@ export class NewsList {
     // this.loadNews();
   }
 
+
+
+
   private loadNews() {
     this.isLoading = true;
+    this.errorMessage = '';
+    this.loadingTime = 0;
+
+    const startTime = performance.now();
+
+    this.timerInterval = setInterval(() => {
+      this.loadingTime = performance.now() - startTime;
+    }, 50);
+
     this.newsService.getNews(this.searchQuery).subscribe({
       next: (response) => {
         this.articles = response.articles;
         this.totalResults = response.totalResults;
-        this.isLoading = false;
+
+        this.stopTimer(startTime);
       },
       error: (error) => {
         this.errorMessage = 'Failed to load news';
-        this.isLoading = false;
         console.error('Error fetching news:', error);
+
+        this.stopTimer(startTime);
       }
     });
   }
+
+  private stopTimer(startTime: number) {
+    clearInterval(this.timerInterval);
+    this.loadingTime = performance.now() - startTime;
+    this.isLoading = false;
+  }
+
+  ngOnDestroy() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+  }
+
 
   public onSearch() {
     this.currentPage = 1;
@@ -65,6 +95,25 @@ export class NewsList {
   }
   public get totalPages(): number {
     return Math.ceil(this.totalResults / this.pageSize);
+  }
+  public goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.loadNews();
+    }
+  }
+
+  get visiblePages(): number[] {
+    const pages: number[] = [];
+
+    let startPage = Math.max(1, this.currentPage - 5);
+    let endPage = Math.min(this.totalPages, this.currentPage + 5);
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return pages;
   }
 
   public handleFavorite(article: Article) {
