@@ -12,10 +12,18 @@
     @if(articles.length === 0){
     <p>No news found.</p>
     } @else {
-    @for(a of articles;track a.title){
-    <app-news-card [article]="a" (toggleFavorite)="handleFavorite(a)"></app-news-card>
+    <div class="list">
+        @for(a of articles;track a.title){
+        <app-news-card [article]="a" (toggleFavorite)="handleFavorite(a)"></app-news-card>
+        }
+    </div>
+    @if(!isLoading && articles.length > 0){
+    <div class="pagination">
+        <button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage * pageSize >= totalResults">Next</button>
+    </div>
     }
-
     }
     }
     }
