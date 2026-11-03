@@ -1,1 +1,16 @@
-<p>news-card works!</p>
+<div class="news-card">
+    @if(article.urlToImage){
+    <img [src]="article.urlToImage" alt="{{ article.title }}" />
+    }
+    <div>
+        <span>{{ article.author}}</span>
+        <span>{{ article.publishedAt | date: 'short' }}</span>
+        <span>{{ article.source.name }}</span>
+        <h2>{{ article.title }}</h2>
+        <p>{{ article.description }}</p>
+        <div>
+            <a href="{{ article.url }}" target="_blank">Read more</a>
+            <button (click)="onFavoriteClick()">Toggle Favorite</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+.news-card {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+.news-card h2 {
+    font-size: 1.5em;
+    margin: 0 0 8px;
+}
+
+.news-card p {
+    margin: 0 0 12px;
+}
+
+.news-card button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.news-card button:hover {
+    background-color: #0056b3;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
